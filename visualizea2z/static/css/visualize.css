@@ -58,7 +58,7 @@ button:hover {
     transition: height 0.3s ease, background-color 0.3s ease;
 }
 
-.highlight {
+.bar.highlight {
     background-color: red;
 }
 
