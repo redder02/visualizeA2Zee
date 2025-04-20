@@ -1,0 +1,119 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+}
+
+/* Input Section */
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Visualization Area */
+.visualization-area {
+    margin-top: 20px;
+    height: 300px; /* Fixed height for consistency */
+    border: 1px solid #ddd;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    overflow-x: auto; /* Horizontal scrolling if needed */
+}
+
+/* Bars or Nodes */
+.bar {
+    width: 20px;
+    background-color: #4CAF50;
+    border-radius: 3px;
+    transition: height 0.3s ease, background-color 0.3s ease;
+}
+
+.highlight {
+    background-color: red;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .visualization-area {
+        height: 250px;
+    }
+
+    input[type="text"], button {
+        padding: 8px;
+    }
+}
+
+/* Center the visualization area */
+.visualization-area {
+    margin-top: 20px;
+    height: 300px; /* Fixed height for consistency */
+    border: 1px solid #ddd;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center; /* Center the bars/nodes horizontally */
+    gap: 5px;
+    overflow-x: auto; /* Horizontal scrolling if needed */
+}
+
+/* Responsive bar sizes */
+.bar {
+    width: calc(100% / var(--num-bars)); /* Dynamic width based on number of bars */
+    max-width: 50px; /* Limit maximum width for readability */
+    background-color: #4CAF50;
+    border-radius: 3px;
+    transition: height 0.3s ease, background-color 0.3s ease;
+}
+
+.highlight {
+    background-color: red;
+}
+
+.bar {
+    width: calc(100% / var(--num-bars));
+    background-color: #4CAF50; /* Initial green color */
+    margin: 1px;
+    display: inline-block;
+    transition: height 0.3s ease, background-color 0.3s ease;
+}
+
+.bar.comparing {
+    background-color: #F44336; /* Red for comparing */
+}
+
+.bar.sorted {
+    background-color: #4CAF50; /* Green for sorted (same as initial) */
+}
