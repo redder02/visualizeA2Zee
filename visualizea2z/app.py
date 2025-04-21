@@ -12,7 +12,6 @@ def load_visualizations():
             dsa_visualizations.append({
                 "slug": slug,
                 "title": slug.replace('-', ' ').title(),
-                "description": f"Description for {slug.replace('-', ' ').title()}",
                 "gif": f"/static/gifs/{slug}.gif"
             })
     return dsa_visualizations

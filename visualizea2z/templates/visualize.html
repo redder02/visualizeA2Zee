@@ -11,36 +11,34 @@
     <!-- Header -->
     <header class="p-4 bg-white dark:bg-gray-800 shadow">
         <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-blue-500 hover:underline">VisualizeA2Zee</a>
             <h1 class="text-xl font-bold">{{ visualization.title }}</h1>
-            <a href="/" class="text-blue-500 hover:underline">Back to Home</a>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto p-4">
-        <!-- Description -->
-        <p class="mb-6 text-lg">{{ visualization.description }}</p>
+        <!-- Flex Container for Input and Visualization -->
+        <div class="flex gap-4">
+            <!-- Left Section (1/3) for Description and Input -->
+            <div class="w-1/3 flex flex-col gap-4">
+                <!-- Description -->
+                <p class="text-lg">{{ visualization.description }}</p>
 
-        <!-- Input Section -->
-        <div id="input-section" class="flex flex-col md:flex-row gap-4 mb-6">
-            <!-- Input fields will be dynamically generated here -->
-        </div>
+                <!-- Input Section -->
+                <div id="input-section" class="flex flex-col gap-4">
+                </div>
+            </div>
 
-        <!-- Visualization Area -->
-        <div id="visualization-area" class="visualization-area">
-            <!-- Animation will be rendered here -->
+            <!-- Right Section (2/3) for Visualization -->
+            <div class="w-2/3">
+                <!-- Visualization Area -->
+                <div id="visualization-area" class="visualization-area h-[400px] border border-gray-300 rounded shadow p-4">
+                    <!-- Animation will be rendered here -->
+                </div>
+            </div>
         </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="p-4 bg-white dark:bg-gray-800 shadow mt-8">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2023 VisualizeA2Zee</p>
-            <p>Attribution to Striver's A2Z DSA Sheet</p>
-        </div>
-    </footer>
-
-    <!-- JavaScript for Visualization -->
     <script src="/visualizations/{{ visualization.slug }}/script.js"></script>
 </body>
 </html>
