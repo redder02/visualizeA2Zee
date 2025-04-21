@@ -1,23 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const inputSection = document.getElementById('input-section');
 
-    // Algorithm Details
-    const algorithmDetails = document.createElement('div');
-    algorithmDetails.classList.add('algorithm-details', 'mb-4'); // Add margin bottom for spacing
-    algorithmDetails.innerHTML = `
-        <h3 class="text-xl font-bold mb-2">Binary Search</h3>
-        <p><strong>Steps:</strong></p>
-        <ol class="list-decimal pl-6">
-            <li>Start with a sorted array.</li>
-            <li>Find the middle element of the array.</li>
-            <li>If the target matches the middle element, return its index.</li>
-            <li>If the target is smaller, repeat the search on the left half; if larger, repeat on the right half.</li>
-            <li>Repeat until the target is found or the subarray size becomes zero.</li>
-        </ol>
-        <p><strong>Time Complexity:</strong> O(log n) in all cases.</p>
-        <p><strong>Space Complexity:</strong> O(1).</p>
-    `;
-    inputSection.appendChild(algorithmDetails);
+
     // Create input field for array
     const inputField = document.createElement('input');
     inputField.type = 'text';
@@ -68,6 +52,23 @@ document.addEventListener('DOMContentLoaded', () => {
         'duration-300'
     );
     inputSection.appendChild(startButton);
+    // Algorithm Details
+    const algorithmDetails = document.createElement('div');
+    algorithmDetails.classList.add('algorithm-details', 'mb-4'); // Add margin bottom for spacing
+    algorithmDetails.innerHTML = `
+        <h3 class="text-xl font-bold mb-2">Binary Search</h3>
+        <p><strong>Steps:</strong></p>
+        <ol class="list-decimal pl-6">
+            <li>Start with a sorted array.</li>
+            <li>Find the middle element of the array.</li>
+            <li>If the target matches the middle element, return its index.</li>
+            <li>If the target is smaller, repeat the search on the left half; if larger, repeat on the right half.</li>
+            <li>Repeat until the target is found or the subarray size becomes zero.</li>
+        </ol>
+        <p><strong>Time Complexity:</strong> O(log n) in all cases.</p>
+        <p><strong>Space Complexity:</strong> O(1).</p>
+    `;
+    inputSection.appendChild(algorithmDetails);
     // Add event listener for the button
     startButton.addEventListener('click', () => {
         const input = document.getElementById('input').value.trim().split(',').map(Number);

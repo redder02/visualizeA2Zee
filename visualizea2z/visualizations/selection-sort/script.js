@@ -34,7 +34,23 @@ document.addEventListener('DOMContentLoaded', () => {
         'duration-300'
     );
     inputSection.appendChild(startButton);
-
+    // Algorithm Details
+    const algorithmDetails = document.createElement('div');
+    algorithmDetails.classList.add('algorithm-details', 'mb-4'); // Add margin bottom for spacing
+    algorithmDetails.innerHTML = `
+        <h3 class="text-xl font-bold mb-2">Selection Sort</h3>
+        <p><strong>Steps:</strong></p>
+        <ol class="list-decimal pl-6">
+            <li>Start with the first element of the array.</li>
+            <li>Find the smallest element in the unsorted portion of the array.</li>
+            <li>Swap it with the first element of the unsorted portion.</li>
+            <li>Move to the next position and repeat the process for the remaining unsorted portion.</li>
+            <li>Continue until the entire array is sorted.</li>
+        </ol>
+        <p><strong>Time Complexity:</strong> O(n²) in all cases (best, average, and worst).</p>
+        <p><strong>Space Complexity:</strong> O(1).</p>
+    `;
+    inputSection.appendChild(algorithmDetails);
     // Add event listener for the button
     startButton.addEventListener('click', () => {
         const input = document.getElementById('input').value.trim().split(',').map(Number);

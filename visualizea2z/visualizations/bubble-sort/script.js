@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const inputSection = document.getElementById('input-section');
-
     // Create input field for array
     const inputField = document.createElement('input');
     inputField.type = 'text';
@@ -34,7 +33,23 @@ document.addEventListener('DOMContentLoaded', () => {
         'duration-300'
     );
     inputSection.appendChild(startButton);
-
+    // Algorithm Details
+    const algorithmDetails = document.createElement('div');
+    algorithmDetails.classList.add('algorithm-details', 'mb-4');
+    algorithmDetails.innerHTML = `
+        <h3 class="text-xl font-bold mb-2">Bubble Sort</h3>
+        <p><strong>Steps:</strong></p>
+        <ol class="list-decimal pl-6">
+            <li>Start at the beginning of the array.</li>
+            <li>Compare adjacent elements and swap them if they are in the wrong order.</li>
+            <li>Move to the next pair of elements and repeat.</li>
+            <li>After one pass, the largest element will "bubble" to the end.</li>
+            <li>Repeat the process for the remaining unsorted portion of the array.</li>
+        </ol>
+        <p><strong>Time Complexity:</strong> O(n²) in the worst and average cases, O(n) in the best case (already sorted).</p>
+        <p><strong>Space Complexity:</strong> O(1).</p>
+    `;
+    inputSection.appendChild(algorithmDetails);
     // Add event listener for the button
     startButton.addEventListener('click', () => {
         const input = document.getElementById('input').value.trim().split(',').map(Number);

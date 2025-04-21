@@ -34,6 +34,23 @@ document.addEventListener('DOMContentLoaded', () => {
         'duration-300'
     );
     inputSection.appendChild(startButton);
+    // Algorithm Details
+    const algorithmDetails = document.createElement('div');
+    algorithmDetails.classList.add('algorithm-details', 'mb-4');
+    algorithmDetails.innerHTML = `
+        <h3 class="text-xl font-bold mb-2">Insertion Sort</h3>
+        <p><strong>Steps:</strong></p>
+        <ol class="list-decimal pl-6">
+            <li>Start with the second element of the array.</li>
+            <li>Compare it with the elements before it and insert it into the correct position.</li>
+            <li>Repeat for each subsequent element, shifting elements as needed.</li>
+            <li>Continue until the entire array is sorted.</li>
+            <li>Best case: The array is already sorted.</li>
+        </ol>
+        <p><strong>Time Complexity:</strong> O(n²) in the worst and average cases, O(n) in the best case (already sorted).</p>
+        <p><strong>Space Complexity:</strong> O(1).</p>
+    `;
+    inputSection.appendChild(algorithmDetails);
 
     // Add event listener for the button
     startButton.addEventListener('click', async () => {
