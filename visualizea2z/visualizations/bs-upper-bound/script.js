@@ -30,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
             border-bottom: 4px solid green; /* Indicate high pointer */
         }
 
+        .bar.upper-bound {
+            border: 2px solid purple; /* Highlight upper bound */
+        }
+
         .result-message {
             margin-top: 10px;
             font-size: 16px;
@@ -83,37 +87,36 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     inputSection.appendChild(targetField);
 
-    // Add Start Visualization button
-    const startButton = document.createElement('button');
-    startButton.id = 'start-visualization';
-    startButton.textContent = 'Start Visualization';
-    startButton.classList.add(
+    // Add Upper Bound Visualization button
+    const upperBoundButton = document.createElement('button');
+    upperBoundButton.id = 'upper-bound-visualization';
+    upperBoundButton.textContent = 'Upper Bound';
+    upperBoundButton.classList.add(
         'px-6',
         'py-2',
-        'bg-blue-500',
+        'bg-purple-500',
         'text-white',
         'rounded-md',
-        'hover:bg-blue-600',
+        'hover:bg-purple-600',
         'transition',
         'duration-300'
     );
-    inputSection.appendChild(startButton);
+    inputSection.appendChild(upperBoundButton);
 
     // Algorithm Details
     const algorithmDetails = document.createElement('div');
     algorithmDetails.classList.add('algorithm-details', 'mb-4'); // Add margin bottom for spacing
     algorithmDetails.innerHTML = `
-        <h3 class="text-xl font-bold mb-2">Binary Search</h3>
+        <h3 class="text-xl font-bold mb-2">Upper Bound</h3>
+        <p><strong>Definition:</strong> The first index where the target could be inserted after all occurrences of the target (> target).</p>
         <p><strong>Steps:</strong></p>
         <ol class="list-decimal pl-6">
             <li>Start with a sorted array.</li>
             <li>Find the middle element of the array.</li>
-            <li>If the target matches the middle element, return its index.</li>
-            <li>If the target is smaller, repeat the search on the left half; if larger, repeat on the right half.</li>
-            <li>Repeat until the target is found or the subarray size becomes zero.</li>
+            <li>If the middle element > target, move to the left half and update the result.</li>
+            <li>If the middle element ≤ target, move to the right half.</li>
+            <li>Repeat until the subarray size becomes zero.</li>
         </ol>
-        <p><strong>Time Complexity:</strong> O(log n) in all cases.</p>
-        <p><strong>Space Complexity:</strong> O(1).</p>
     `;
     inputSection.appendChild(algorithmDetails);
 
@@ -122,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
     resultMessageContainer.id = 'result-message-container';
     inputSection.appendChild(resultMessageContainer);
 
-    // Add event listener for the button
-    startButton.addEventListener('click', () => {
+    // Event listener for Upper Bound Visualization button
+    upperBoundButton.addEventListener('click', () => {
         const input = document.getElementById('input').value.trim().split(',').map(Number);
         const target = parseInt(document.getElementById('target').value.trim(), 10);
 
@@ -148,12 +151,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return box;
         });
 
-        // Binary Search logic
         let low = 0, high = input.length - 1;
+        let result = input.length; // Default result for upper bound
         const searchInterval = setInterval(() => {
             if (low > high) {
                 clearInterval(searchInterval);
-                resultMessageContainer.innerHTML = '<p class="result-message failure">Target not found!</p>';
+                boxes.forEach((box, index) => {
+                    if (index === result) {
+                        box.classList.add('upper-bound'); // Highlight the upper bound
+                    }
+                });
+                resultMessageContainer.innerHTML = `<p class="result-message success">Upper Bound Index: ${result}.</p>`;
                 return;
             }
 
@@ -172,13 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
             boxes[high].classList.add('high-pointer');
 
             setTimeout(() => {
-                if (input[mid] === target) {
-                    clearInterval(searchInterval);
-                    resultMessageContainer.innerHTML = `<p class="result-message success">Target found at index ${mid}.</p>`;
-                } else if (input[mid] < target) {
-                    low = mid + 1;
-                } else {
+                if (input[mid] > target) {
+                    result = mid; // Update result for upper bound
                     high = mid - 1;
+                } else {
+                    low = mid + 1;
                 }
             }, 1000);
         }, 1500);

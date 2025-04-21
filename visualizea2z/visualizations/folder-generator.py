@@ -1,6 +1,6 @@
 import os
 
-folder_name = 'merge-sort'
+folder_name = ''
 files = ['script.js', 'index.html', 'style.css']
 
 os.makedirs(folder_name, exist_ok=True)

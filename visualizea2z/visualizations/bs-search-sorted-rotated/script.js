@@ -30,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
             border-bottom: 4px solid green; /* Indicate high pointer */
         }
 
+        .bar.found {
+            background-color: green; /* Mark the found node in green */
+        }
+
         .result-message {
             margin-top: 10px;
             font-size: 16px;
@@ -52,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputField = document.createElement('input');
     inputField.type = 'text';
     inputField.id = 'input';
-    inputField.placeholder = 'Enter sorted array (e.g., 2,4,6,8,10,12,14,16,18,20)';
-    inputField.value = '2,4,6,8,10,12,14,16,18,20'; // Default value
+    inputField.placeholder = 'Enter sorted rotated array (e.g., 4,5,6,7,0,1,2)';
+    inputField.value = '4,5,6,7,0,1,2'; // Default value
     inputField.classList.add(
         'flex-grow',
         'px-4',
@@ -70,8 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const targetField = document.createElement('input');
     targetField.type = 'text';
     targetField.id = 'target';
-    targetField.placeholder = 'Enter target value (e.g., 12)';
-    targetField.value = '12'; // Default value
+    targetField.placeholder = 'Enter target value (e.g., 0)';
+    targetField.value = '0'; // Default value
     targetField.classList.add(
         'px-4',
         'py-2',
@@ -103,13 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const algorithmDetails = document.createElement('div');
     algorithmDetails.classList.add('algorithm-details', 'mb-4'); // Add margin bottom for spacing
     algorithmDetails.innerHTML = `
-        <h3 class="text-xl font-bold mb-2">Binary Search</h3>
+        <h3 class="text-xl font-bold mb-2">Search in Sorted Rotated Array</h3>
         <p><strong>Steps:</strong></p>
         <ol class="list-decimal pl-6">
-            <li>Start with a sorted array.</li>
-            <li>Find the middle element of the array.</li>
-            <li>If the target matches the middle element, return its index.</li>
-            <li>If the target is smaller, repeat the search on the left half; if larger, repeat on the right half.</li>
+            <li>Identify the sorted half of the array (left or right).</li>
+            <li>Determine if the target lies within the sorted half.</li>
+            <li>Narrow down the search space accordingly.</li>
             <li>Repeat until the target is found or the subarray size becomes zero.</li>
         </ol>
         <p><strong>Time Complexity:</strong> O(log n) in all cases.</p>
@@ -148,12 +151,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return box;
         });
 
-        // Binary Search logic
+        // Search in sorted rotated array logic
         let low = 0, high = input.length - 1;
+        let ans = -1; // Variable to store the index of the target
         const searchInterval = setInterval(() => {
             if (low > high) {
+
                 clearInterval(searchInterval);
-                resultMessageContainer.innerHTML = '<p class="result-message failure">Target not found!</p>';
+                if (ans !== -1) {
+                    // Mark the found node with green color
+                    boxes[ans].classList.add('found');
+                    resultMessageContainer.innerHTML = `<p class="result-message success">Target found at index ${ans}.</p>`;
+                } else {
+                    resultMessageContainer.innerHTML = '<p class="result-message failure">Target not found!</p>';
+                }
                 return;
             }
 
@@ -173,12 +184,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             setTimeout(() => {
                 if (input[mid] === target) {
-                    clearInterval(searchInterval);
-                    resultMessageContainer.innerHTML = `<p class="result-message success">Target found at index ${mid}.</p>`;
-                } else if (input[mid] < target) {
-                    low = mid + 1;
+                    ans = mid; // Target found
+                    clearInterval(searchInterval); // Stop further iterations
+                } else if (input[low] <= input[mid]) {
+                    // Left half is sorted
+                    if (target >= input[low] && target < input[mid]) {
+                        high = mid - 1; // Target lies in the left half
+                    } else {
+                        low = mid + 1; // Target lies in the right half
+                    }
                 } else {
-                    high = mid - 1;
+                    // Right half is sorted
+                    if (target > input[mid] && target <= input[high]) {
+                        low = mid + 1; // Target lies in the right half
+                    } else {
+                        high = mid - 1; // Target lies in the left half
+                    }
                 }
             }, 1000);
         }, 1500);

@@ -30,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
             border-bottom: 4px solid green; /* Indicate high pointer */
         }
 
+        .bar.found {
+            background-color: green; /* Mark the found node in green */
+        }
+
         .result-message {
             margin-top: 10px;
             font-size: 16px;
@@ -53,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputField.type = 'text';
     inputField.id = 'input';
     inputField.placeholder = 'Enter sorted array (e.g., 2,4,6,8,10,12,14,16,18,20)';
-    inputField.value = '2,4,6,8,10,12,14,16,18,20'; // Default value
+    inputField.value = '2,4,6, 6, 6, 6, 8,10,12,14,16,18,20'; // Default value
     inputField.classList.add(
         'flex-grow',
         'px-4',
@@ -71,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     targetField.type = 'text';
     targetField.id = 'target';
     targetField.placeholder = 'Enter target value (e.g., 12)';
-    targetField.value = '12'; // Default value
+    targetField.value = '6'; // Default value
     targetField.classList.add(
         'px-4',
         'py-2',
@@ -108,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <ol class="list-decimal pl-6">
             <li>Start with a sorted array.</li>
             <li>Find the middle element of the array.</li>
-            <li>If the target matches the middle element, return its index.</li>
+            <li>If the target matches the middle element, store its index and continue searching in the left half.</li>
             <li>If the target is smaller, repeat the search on the left half; if larger, repeat on the right half.</li>
             <li>Repeat until the target is found or the subarray size becomes zero.</li>
         </ol>
@@ -150,10 +154,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Binary Search logic
         let low = 0, high = input.length - 1;
+        let ans; // Variable to store the first occurrence index
         const searchInterval = setInterval(() => {
             if (low > high) {
                 clearInterval(searchInterval);
-                resultMessageContainer.innerHTML = '<p class="result-message failure">Target not found!</p>';
+                if (typeof ans !== 'undefined') {
+                    // Mark the found node with green color
+                    boxes[ans].classList.add('found');
+                    resultMessageContainer.innerHTML = `<p class="result-message success">First occurrence of target found at index ${ans}.</p>`;
+                } else {
+                    resultMessageContainer.innerHTML = '<p class="result-message failure">Target not found!</p>';
+                }
                 return;
             }
 
@@ -173,8 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             setTimeout(() => {
                 if (input[mid] === target) {
-                    clearInterval(searchInterval);
-                    resultMessageContainer.innerHTML = `<p class="result-message success">Target found at index ${mid}.</p>`;
+                    ans = mid; // Store the current index as a potential answer
+                    high = mid - 1; // Continue searching in the left half for the first occurrence
                 } else if (input[mid] < target) {
                     low = mid + 1;
                 } else {
