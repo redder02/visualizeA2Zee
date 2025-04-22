@@ -1,6 +1,6 @@
 import os
 
-folder_name = 'sudoku-solver'
+folder_name = 'factorial'
 files = ['script.js', 'index.html', 'style.css']
 
 os.makedirs(folder_name, exist_ok=True)
