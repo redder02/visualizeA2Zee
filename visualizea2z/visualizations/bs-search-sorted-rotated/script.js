@@ -156,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let ans = -1; // Variable to store the index of the target
         const searchInterval = setInterval(() => {
             if (low > high) {
-
                 clearInterval(searchInterval);
                 if (ans !== -1) {
                     // Mark the found node with green color
