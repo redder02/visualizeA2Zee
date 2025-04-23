@@ -9,10 +9,14 @@ def load_visualizations():
     dsa_visualizations = []
     for slug in os.listdir(visualizations_folder):
         if os.path.isdir(os.path.join(visualizations_folder, slug)):
+            css_file = f"{slug}.css"
+            css_path = os.path.join(visualizations_folder, slug, css_file)
+            has_css = os.path.exists(css_path)
             dsa_visualizations.append({
                 "slug": slug,
                 "title": slug.replace('-', ' ').title(),
-                "gif": f"/static/gifs/{slug}.gif"
+                "gif": f"/static/gifs/{slug}.gif",
+                "css": css_file if has_css else None,  # Include CSS file if it exists
             })
     return dsa_visualizations
 

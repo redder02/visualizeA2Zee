@@ -1,0 +1,19 @@
+/* Shared Button Styles */
+.control-button {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.25rem;
+    background-color: #3b82f6;
+    color: white;
+    cursor: pointer;
+}
+
+.control-button:hover {
+    background-color: #2563eb;
+}
+
+/* Speed Slider Styles */
+.speed-slider {
+    width: 100%;
+    margin: 0.5rem 0;
+}

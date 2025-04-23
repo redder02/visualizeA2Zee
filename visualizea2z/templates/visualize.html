@@ -6,6 +6,7 @@
     <title>{{ visualization.title }} - VisualizeA2Zee</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="/static/css/visualize.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/shared.css') }}" rel="stylesheet">
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
     <!-- Header -->
@@ -21,7 +22,7 @@
         <!-- Flex Container for Input and Visualization -->
         <div class="flex gap-4">
             <!-- Left Section (1/3) for Description and Input -->
-            <div class="w-1/3 flex flex-col gap-4">
+            <div class="w-1/5 flex flex-col gap-4">
                 <!-- Description -->
                 <p class="text-lg">{{ visualization.description }}</p>
 
@@ -31,7 +32,7 @@
             </div>
 
             <!-- Right Section (2/3) for Visualization -->
-            <div class="w-2/3">
+            <div class="w-4/5">
                 <!-- Visualization Area -->
                 <div id="visualization-area" class="visualization-area h-[400px] border border-gray-300 rounded shadow p-4">
                     <!-- Animation will be rendered here -->
@@ -39,6 +40,12 @@
             </div>
         </div>
     </main>
-    <script src="/visualizations/{{ visualization.slug }}/script.js"></script>
+
+    <!-- Shared Scripts-->
+    <script type="module" src="{{ url_for('static', filename = 'js/components/buttons.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename = 'js/components/controls.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename = 'js/components/slider.js') }}"></script>
+
+    <script type="module" src="/visualizations/{{ visualization.slug }}/script.js"></script>
 </body>
 </html>

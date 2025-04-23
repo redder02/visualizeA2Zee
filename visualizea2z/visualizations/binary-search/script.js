@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inject CSS into the document
     const style = document.createElement('style');
     style.innerHTML = `
+        /* General Styles */
         #visualization-area {
             display: flex;
             justify-content: center;
@@ -43,6 +44,58 @@ document.addEventListener('DOMContentLoaded', () => {
         .failure {
             color: red;
         }
+
+        /* Compact Control Bar */
+        #control-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            background-color: #2d3748; /* Dark background for control bar */
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        #control-bar button {
+            background-color: transparent; /* Transparent background */
+            border: none;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        #control-bar button:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Hover effect */
+        }
+
+        #control-bar svg {
+            width: 18px;
+            height: 18px;
+            fill: white; /* White icons for better visibility */
+        }
+
+        #speed-slider {
+            flex-grow: 1; /* Allow the slider to take up remaining space */
+            margin-left: 10px;
+        }
+
+        /* Start Visualization Button */
+        #start-visualization {
+            width: 100%; /* Full width on small screens */
+            margin-top: 10px;
+        }
+
+        @media (min-width: 768px) {
+            #start-visualization {
+                width: auto; /* Auto width on larger screens */
+            }
+        }
     `;
     document.head.appendChild(style);
 
@@ -75,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     targetField.classList.add(
         'px-4',
         'py-2',
+        'ml-2',
         'border',
         'border-gray-300',
         'rounded-md',
@@ -83,19 +137,73 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     inputSection.appendChild(targetField);
 
+    // Compact Control Bar
+    const controlBar = document.createElement('div');
+    controlBar.id = 'control-bar';
+    inputSection.appendChild(controlBar);
+
+    // Step Backward Button
+    const stepBackwardButton = document.createElement('button');
+    stepBackwardButton.id = 'step-backward';
+    stepBackwardButton.classList.add('p-2', 'text-white', 'hover:bg-gray-700', 'rounded-full');
+    stepBackwardButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+        </svg>
+    `;
+    controlBar.appendChild(stepBackwardButton);
+
+    // Play/Pause Button
+    const playPauseButton = document.createElement('button');
+    playPauseButton.id = 'play-pause';
+    playPauseButton.classList.add('p-2', 'text-white', 'hover:bg-gray-700', 'rounded-full');
+    playPauseButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24">
+            <!-- Circle Background -->
+            <circle cx="12" cy="12" r="10" fill="white" />
+            <!-- Play Icon -->
+            <path id="play-icon" fill="black" d="M10 8v8l6-4z" />
+            <!-- Pause Icon -->
+            <path id="pause-icon" fill="black" d="M10 8h2v8h-2zm4 0h2v8h-2z" style="display: none;" />
+        </svg>
+    `;
+    controlBar.appendChild(playPauseButton);
+
+    // Step Forward Button
+    const stepForwardButton = document.createElement('button');
+    stepForwardButton.id = 'step-forward';
+    stepForwardButton.classList.add('p-2', 'text-white', 'hover:bg-gray-700', 'rounded-full');
+    stepForwardButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+        </svg>
+    `;
+    controlBar.appendChild(stepForwardButton);
+
+    // Speed Slider
+    const speedSliderContainer = document.createElement('div');
+    speedSliderContainer.classList.add('flex-grow', 'mx-4');
+    controlBar.appendChild(speedSliderContainer);
+    const speedSlider = document.createElement('input');
+    speedSlider.type = 'range';
+    speedSlider.id = 'speed-slider';
+    speedSlider.classList.add('w-full');
+    speedSlider.min = '100'; // Minimum delay (in ms)
+    speedSlider.max = '4000'; // Maximum delay (in ms)
+    speedSlider.value = '1500'; // Default value
+    speedSliderContainer.appendChild(speedSlider);
+
     // Add Start Visualization button
     const startButton = document.createElement('button');
     startButton.id = 'start-visualization';
-    startButton.textContent = 'Start Visualization';
+    startButton.textContent = 'Start Animation';
     startButton.classList.add(
-        'px-6',
-        'py-2',
+        'p-2',
         'bg-blue-500',
         'text-white',
-        'rounded-md',
+        'rounded',
         'hover:bg-blue-600',
-        'transition',
-        'duration-300'
+        'ml-2'
     );
     inputSection.appendChild(startButton);
 
@@ -122,10 +230,15 @@ document.addEventListener('DOMContentLoaded', () => {
     resultMessageContainer.id = 'result-message-container';
     inputSection.appendChild(resultMessageContainer);
 
-    // Add event listener for the button
-    startButton.addEventListener('click', () => {
-        const input = document.getElementById('input').value.trim().split(',').map(Number);
-        const target = parseInt(document.getElementById('target').value.trim(), 10);
+    let paused = true;
+    let animationSpeed = parseInt(speedSlider.value, 10);
+    let low, high, mid, input, target, boxes, history = [], historyIndex = -1;
+    let animationInterval;
+
+    // Function to initialize binary search
+    function initializeBinarySearch() {
+        input = document.getElementById('input').value.trim().split(',').map(Number);
+        target = parseInt(document.getElementById('target').value.trim(), 10);
 
         if (!input || input.some(isNaN) || isNaN(target)) {
             resultMessageContainer.innerHTML = '<p class="result-message failure">Please enter valid input and target values.</p>';
@@ -139,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         area.style.setProperty('--num-bars', input.length);
 
         // Create boxes for the array
-        const boxes = input.map(value => {
+        boxes = input.map(value => {
             const box = document.createElement('div');
             box.textContent = value;
             box.classList.add('bar');
@@ -148,39 +261,116 @@ document.addEventListener('DOMContentLoaded', () => {
             return box;
         });
 
-        // Binary Search logic
-        let low = 0, high = input.length - 1;
-        const searchInterval = setInterval(() => {
-            if (low > high) {
-                clearInterval(searchInterval);
-                resultMessageContainer.innerHTML = '<p class="result-message failure">Target not found!</p>';
-                return;
-            }
+        // Initialize binary search variables
+        low = 0;
+        high = input.length - 1;
+        history = [];
+        historyIndex = -1;
 
-            const mid = Math.floor((low + high) / 2);
+        saveState();
+        updateVisualization();
+    }
 
-            // Remove previous highlights
-            boxes.forEach((box, index) => {
-                box.classList.remove('highlight', 'low-pointer', 'high-pointer');
-            });
+    // Save the current state to history
+    function saveState() {
+        history = history.slice(0, historyIndex + 1); // Remove future states
+        history.push({ low, high, mid });
+        historyIndex++;
+    }
 
-            // Highlight the mid-point in red
-            boxes[mid].classList.add('highlight');
+    // Update visualization based on current state
+    function updateVisualization() {
+        // Remove previous highlights
+        boxes.forEach((box, index) => {
+            box.classList.remove('highlight', 'low-pointer', 'high-pointer');
+        });
 
-            // Highlight low and high pointers
+        if (low <= high) {
+            // Highlight low, high, and mid pointers
             boxes[low].classList.add('low-pointer');
             boxes[high].classList.add('high-pointer');
+            if (mid !== undefined) boxes[mid].classList.add('highlight');
+        }
+    }
 
-            setTimeout(() => {
-                if (input[mid] === target) {
-                    clearInterval(searchInterval);
-                    resultMessageContainer.innerHTML = `<p class="result-message success">Target found at index ${mid}.</p>`;
-                } else if (input[mid] < target) {
-                    low = mid + 1;
-                } else {
-                    high = mid - 1;
+    // Perform one step of binary search
+    function processNextStep() {
+        if (low > high) {
+            clearInterval(animationInterval); // Stop the animation if the search is complete
+            return;
+        }
+
+        mid = Math.floor((low + high) / 2);
+
+        saveState();
+        updateVisualization();
+
+        if (input[mid] === target) {
+            resultMessageContainer.innerHTML = `<p class="result-message success">Target found at index ${mid}.</p>`;
+            clearInterval(animationInterval); // Stop the animation when the target is found
+        } else if (input[mid] < target) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    // Event listener for Start Visualization button
+    startButton.addEventListener('click', () => {
+        initializeBinarySearch();
+        paused = false;
+
+        // Start automatic animation
+        clearInterval(animationInterval); // Clear any existing interval
+        animationInterval = setInterval(() => {
+            if (!paused) {
+                processNextStep();
+            }
+        }, animationSpeed);
+
+        // Ensure Play/Pause button reflects the correct state
+        playPauseButton.querySelector('#play-icon').style.display = 'none';
+        playPauseButton.querySelector('#pause-icon').style.display = 'block';
+    });
+
+    // Play/Pause functionality
+    playPauseButton.addEventListener('click', () => {
+        paused = !paused;
+        const playIcon = playPauseButton.querySelector('#play-icon');
+        const pauseIcon = playPauseButton.querySelector('#pause-icon');
+        playIcon.style.display = paused ? 'block' : 'none';
+        pauseIcon.style.display = paused ? 'none' : 'block';
+    });
+
+    // Step Forward functionality
+    stepForwardButton.addEventListener('click', () => {
+        if (paused && low <= high) {
+            processNextStep();
+        }
+    });
+
+    // Step Backward functionality
+    stepBackwardButton.addEventListener('click', () => {
+        if (historyIndex > 0) {
+            historyIndex--;
+            const prevState = history[historyIndex];
+            low = prevState.low;
+            high = prevState.high;
+            mid = prevState.mid;
+            updateVisualization();
+        }
+    });
+
+    // Update animation speed dynamically
+    speedSlider.addEventListener('input', () => {
+        animationSpeed = parseInt(speedSlider.value, 10);
+        clearInterval(animationInterval); // Restart the interval with the new speed
+        if (!paused) {
+            animationInterval = setInterval(() => {
+                if (!paused) {
+                    processNextStep();
                 }
-            }, 1000);
-        }, 1500);
+            }, animationSpeed);
+        }
     });
 });
